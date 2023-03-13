@@ -31,5 +31,18 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.mainTheme,
   },
-  addButton: { position: 'absolute', right: 30, bottom: 30 },
+  addButton: {
+    backgroundColor: colors.mainTheme,
+    borderRadius: 30,
+    position: 'absolute',
+    right: 30,
+    bottom: 30,
+    shadowColor: 'black',
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+  },
 });

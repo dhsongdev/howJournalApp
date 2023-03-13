@@ -20,8 +20,6 @@ const HomeHeader = () => (
   </SafeAreaView>
 );
 
-const BackButton = () => <Text>back</Text>;
-
 export default function Navigator() {
   return (
     <Stack.Navigator>
@@ -36,7 +34,6 @@ export default function Navigator() {
         name="Add"
         component={Add}
         options={() => ({
-          headerLeft: () => <BackButton />,
           headerTransparent: 'true',
           headerTitle: 'Add new journal',
           presentation: 'modal',
