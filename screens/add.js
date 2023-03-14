@@ -9,19 +9,34 @@ import {
   Button,
 } from 'react-native';
 
+import { realmContext } from '../realmDB';
+
 import { emojis } from '../emojis';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../colors';
 
 export default function Add({ navigation, navigation: { goBack } }) {
-  const [selectedEmoji, setSelectedEmoji] = React.useState(0);
+  const realm = React.useContext(realmContext);
+
+  const [selectedEmoji, setSelectedEmoji] = React.useState('');
   const [comment, setComment] = React.useState('');
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
     if (comment === '') {
-      console.log('no');
+      //alert write comment
+      return;
+    } else if (selectedEmoji === '') {
+      //alert select emoji
       return;
     }
+    console.log('realm saved', realm);
+    await realm.write(() => {
+      realm.create('Journal', {
+        _id: Date.now(),
+        emotion: selectedEmoji,
+        comment,
+      });
+    });
     goBack();
   };
 
@@ -45,15 +60,15 @@ export default function Add({ navigation, navigation: { goBack } }) {
       <View style={styles.container}>
         <Text style={styles.title}>How was your feeling?</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          {emojis.map((emoji, index) => (
+          {emojis.map((emoji) => (
             <TouchableOpacity
               key={emoji}
               onPress={() => {
-                setSelectedEmoji(index);
+                setSelectedEmoji(emoji);
               }}
               style={[
                 styles.emoji,
-                selectedEmoji === index ? styles.selectedEmoji : null,
+                selectedEmoji === emoji ? styles.selectedEmoji : null,
               ]}
             >
               <Text>{emoji}</Text>
@@ -89,7 +104,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.addScreen,
     padding: 15,
   },
-  container: { marginBottom: 20 },
+  container: { marginBottom: 20, alignItems: 'center' },
   title: {
     fontSize: 20,
     fontWeight: '400',
@@ -103,6 +118,13 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     width: 40,
     height: 40,
+    shadowColor: 'black',
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
   },
   selectedEmoji: {
     borderWidth: 3,
@@ -110,14 +132,29 @@ const styles = StyleSheet.create({
     borderStyle: 'solid',
   },
   comment: {
+    width: '100%',
     paddingTop: 10,
     padding: 10,
     backgroundColor: 'white',
     borderRadius: 10,
     marginBottom: 10,
+    shadowColor: 'black',
+    shadowOpacity: 0.05,
+    shadowRadius: 5,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
   },
   submit: {
     backgroundColor: '#C8B6A6',
     borderRadius: 5,
+    shadowColor: 'black',
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
   },
 });

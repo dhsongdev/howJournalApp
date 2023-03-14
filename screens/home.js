@@ -6,12 +6,15 @@ import {
   StyleSheet,
   SafeAreaView,
 } from 'react-native';
+import { realmContext } from '../realmDB';
 
 //components
 import { AntDesign } from '@expo/vector-icons';
 import { colors } from '../colors';
+import { useRealmDBContext } from '../realmDB';
 
 export default function Home({ navigation }) {
+  const JournalData = React.useContext(realmContext);
   return (
     <SafeAreaView style={styles.mainContainer}>
       <TouchableOpacity
