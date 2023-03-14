@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import * as SplashScreen from 'expo-splash-screen';
+import { FileSystem } from 'expo-file-system';
 
 import Realm from 'realm';
 import Navigator from './navigator';
@@ -27,7 +28,7 @@ export default function App() {
     async function prepare() {
       try {
         const initRealm = await Realm.open({
-          path: `${FileSystem.documentDirectory}/JournalDB.realm`,
+          path: `JournalDB.realm`,
           schema: [JournalSchema],
         });
         setRealm(initRealm);
@@ -43,8 +44,6 @@ export default function App() {
   if (appReady) {
     SplashScreen.hideAsync();
   }
-
-  console.log(realm);
 
   return (
     <realmContext.Provider value={realm}>

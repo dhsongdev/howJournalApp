@@ -20,16 +20,12 @@ export default function Add({ navigation, navigation: { goBack } }) {
 
   const [selectedEmoji, setSelectedEmoji] = React.useState('');
   const [comment, setComment] = React.useState('');
-
   const onSubmit = async () => {
     if (comment === '') {
-      //alert write comment
       return;
     } else if (selectedEmoji === '') {
-      //alert select emoji
       return;
     }
-    console.log('realm saved', realm);
     await realm.write(() => {
       realm.create('Journal', {
         _id: Date.now(),

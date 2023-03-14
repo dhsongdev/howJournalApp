@@ -4,19 +4,62 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  SafeAreaView,
+  FlatList,
 } from 'react-native';
 import { realmContext } from '../realmDB';
 
 //components
-import { AntDesign } from '@expo/vector-icons';
+import { AntDesign, FontAwesome } from '@expo/vector-icons';
 import { colors } from '../colors';
-import { useRealmDBContext } from '../realmDB';
 
 export default function Home({ navigation }) {
-  const JournalData = React.useContext(realmContext);
+  const realm = React.useContext(realmContext);
+  const [journalData, setJournalData] = React.useState([]);
+
+  React.useEffect(() => {
+    if (realm) {
+      const object = realm.objects('Journal');
+      setJournalData(object.sorted('_id', true));
+      object.addListener((obj, changes) => {
+        setJournalData(obj.sorted('_id', true));
+      });
+      return () => {
+        object.removeAllListeners();
+      };
+    }
+  }, [realm]);
+
+  const onPressDelete = (id) => {
+    realm.write(() => {
+      const target = realm.objectForPrimaryKey('Journal', id);
+      realm.delete(target);
+    });
+  };
+
+  const JournalBox = ({ item }) => {
+    return (
+      <View style={styles.journalBox}>
+        <Text style={styles.emotion}>{item.emotion}</Text>
+        <Text style={styles.comment}>{item.comment}</Text>
+        <TouchableOpacity
+          onPress={() => onPressDelete(item._id)}
+          style={styles.removeButton}
+        >
+          <FontAwesome name="remove" size={15} color="grey" />
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
   return (
-    <SafeAreaView style={styles.mainContainer}>
+    <View style={styles.mainContainer}>
+      {journalData === [] ? null : (
+        <FlatList
+          data={journalData.slice()}
+          renderItem={({ item }) => <JournalBox item={item} />}
+          keyExtractor={(item) => item._id}
+        />
+      )}
       <TouchableOpacity
         onPress={() => {
           navigation.navigate('Add');
@@ -25,7 +68,7 @@ export default function Home({ navigation }) {
       >
         <AntDesign name="pluscircle" size={60} color={colors.button} />
       </TouchableOpacity>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -47,5 +90,25 @@ const styles = StyleSheet.create({
       width: 0,
       height: 2,
     },
+  },
+  journalBox: {
+    backgroundColor: '#F1DEC9',
+    marginHorizontal: 10,
+    marginVertical: 5,
+    flexDirection: 'row',
+    borderRadius: 10,
+    padding: 10,
+  },
+  emotion: {
+    marginRight: 5,
+  },
+  comment: {
+    flexShrink: 1,
+    marginRight: 10,
+  },
+  removeButton: {
+    position: 'absolute',
+    right: 5,
+    top: 2,
   },
 });
