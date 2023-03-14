@@ -5,8 +5,17 @@ import {
   TouchableOpacity,
   StyleSheet,
   FlatList,
+  LayoutAnimation,
+  UIManager,
 } from 'react-native';
 import { realmContext } from '../realmDB';
+
+if (
+  Platform.OS === 'android' &&
+  UIManager.setLayoutAnimationEnabledExperimental
+) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 
 //components
 import { AntDesign, FontAwesome } from '@expo/vector-icons';
@@ -19,8 +28,8 @@ export default function Home({ navigation }) {
   React.useEffect(() => {
     if (realm) {
       const object = realm.objects('Journal');
-      setJournalData(object.sorted('_id', true));
       object.addListener((obj, changes) => {
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
         setJournalData(obj.sorted('_id', true));
       });
       return () => {
