@@ -9,6 +9,11 @@ import {
   UIManager,
 } from 'react-native';
 import { realmContext } from '../realmDB';
+import {
+  BannerAd,
+  BannerAdSize,
+  TestIds,
+} from 'react-native-google-mobile-ads';
 
 if (
   Platform.OS === 'android' &&
@@ -61,22 +66,33 @@ export default function Home({ navigation }) {
   };
 
   return (
-    <View style={styles.mainContainer}>
-      {journalData === [] ? null : (
-        <FlatList
-          data={journalData.slice()}
-          renderItem={({ item }) => <JournalBox item={item} />}
-          keyExtractor={(item) => item._id}
+    <View style={{ flex: 1 }}>
+      <View style={styles.mainContainer}>
+        <BannerAd
+          size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+          unitId={TestIds.BANNER}
         />
-      )}
-      <TouchableOpacity
-        onPress={() => {
-          navigation.navigate('Add');
-        }}
-        style={styles.addButton}
-      >
-        <AntDesign name="pluscircle" size={60} color={colors.button} />
-      </TouchableOpacity>
+        {journalData === [] ? null : (
+          <FlatList
+            data={journalData.slice()}
+            renderItem={({ item }) => <JournalBox item={item} />}
+            keyExtractor={(item) => item._id}
+          />
+        )}
+
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate('Add');
+          }}
+          style={styles.addButton}
+        >
+          <AntDesign name="pluscircle" size={60} color={colors.button} />
+        </TouchableOpacity>
+      </View>
+      <BannerAd
+        size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+        unitId={TestIds.BANNER}
+      />
     </View>
   );
 }

@@ -1,11 +1,12 @@
 {
+  "react-native-google-mobile-ads": {
+    "ios_app_id": "ca-app-pub-3851097932309486~1570253847"
+  },
   "expo": {
     "name": "howDiary",
     "slug": "howDiary",
     "version": "1.0.0",
-    "assetBundlePatterns": [
-      "**/*"
-    ]
+    "assetBundlePatterns": ["**/*"]
   },
   "name": "howDiary"
 }

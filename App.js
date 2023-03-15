@@ -1,7 +1,13 @@
 import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import * as SplashScreen from 'expo-splash-screen';
-import { FileSystem } from 'expo-file-system';
+import mobileAds, {
+  BannerAd,
+  BannerAdSize,
+  TestIds,
+} from 'react-native-google-mobile-ads';
+import RNFS from 'react-native-fs';
+import { check, request, PERMISSIONS, RESULTS } from 'react-native-permissions';
 
 import Realm from 'realm';
 import Navigator from './navigator';
@@ -18,6 +24,7 @@ const JournalSchema = {
   primaryKey: '_id',
 };
 
+console.log(RNFS.DocumentDirectoryPath);
 SplashScreen.preventAutoHideAsync();
 
 export default function App() {
@@ -27,6 +34,21 @@ export default function App() {
   React.useEffect(() => {
     async function prepare() {
       try {
+        if (Platform.OS === 'ios') {
+          const result = await check(PERMISSIONS.IOS.APP_TRACKING_TRANSPARENCY);
+          if (result === RESULTS.DENIED) {
+            await request(PERMISSIONS.IOS.APP_TRACKING_TRANSPARENCY);
+          }
+        } else {
+          mobileAds()
+            .initialize()
+            .then((adapterStatuses) => {
+              // Initialization complete!
+            });
+        }
+
+        const adapterStatuses = await mobileAds().initialize();
+
         const initRealm = await Realm.open({
           path: `JournalDB.realm`,
           schema: [JournalSchema],
